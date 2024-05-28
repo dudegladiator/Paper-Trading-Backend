@@ -1,0 +1,8 @@
+.pytest_cache
+.venv
+*.env
+__pycache__
+Dashboard/__pycache__
+DatabaseManagement/__pycache__
+routes/__pycache__
+utils/__pycache__
