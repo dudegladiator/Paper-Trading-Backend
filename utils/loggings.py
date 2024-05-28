@@ -2,6 +2,10 @@ import logging
 from logging.handlers import RotatingFileHandler
 from utils.logger_api import NewRelicHandler
 from utils.IST_Time import get_current_time_IST
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
 
 class ContextFilter(logging.Filter):
     """
@@ -35,7 +39,7 @@ log_format_file = '%(asctime)s - %(message)s'
 # logger.addHandler(file_handler)
 
 # Add NewRelicHandler to the logger
-api_key = '64b99a198d1ebb30c7454a25f9d3737fFFFFNRAL'  # Replace with your New Relic API key
+api_key = os.getenv("LOG_KEY")  # Replace with your New Relic API key
 new_relic_handler = NewRelicHandler(api_key)
 new_relic_handler.setLevel(logging.INFO)
 new_relic_handler.setFormatter(logging.Formatter(log_format_file))
