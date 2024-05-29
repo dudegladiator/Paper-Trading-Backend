@@ -6,7 +6,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
 import uvicorn
-from routes import dashboard_routes, extension_routes
+from routes import dashboard_routes, extension_routes, health_routes
 
 class Settings(BaseSettings):
     MYSQL_HOST: str
@@ -31,8 +31,9 @@ app.add_middleware(
 )
 
 # Mount the extension routes
-app.include_router(extension_routes.extension)
+app.include_router(extension_routes.router)
 app.include_router(dashboard_routes.router)
+app.include_router(health_routes.router)
 
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc: HTTPException):
@@ -41,9 +42,7 @@ async def not_found_handler(request: Request, exc: HTTPException):
         content={"message": "The requested resource was not found"}
     )
     
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+
 
 
 if __name__ == "__main__":

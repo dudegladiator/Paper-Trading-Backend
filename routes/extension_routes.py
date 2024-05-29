@@ -18,7 +18,7 @@ from DatabaseManagement.service import (
 )
 from utils.util import create_token
 
-extension = APIRouter()
+router = APIRouter()
 db = Database()
 
 chrome_extension_origin = "chrome-extension://hbocfhgkiadihfiiikhohblkdoahegkk"
@@ -210,7 +210,7 @@ def handle_sell(user_data, trade: TradeRequest, charges: float):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Authentication endpoint
-@extension.post("/authenticate", response_model=AuthResponse)
+@router.post("/authenticate", response_model=AuthResponse)
 async def authenticate(request:Request, api_key: str):
     if request.headers.get("Origin") != chrome_extension_origin:
         print(request.headers.get("Origin"))
@@ -233,7 +233,7 @@ async def authenticate(request:Request, api_key: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Get user data endpoint
-@extension.get("/user", response_model=UserData)
+@router.get("/user", response_model=UserData)
 async def get_user_data(request:Request, api_key: str = Header(...), token: str = Header(...)):
     print(api_key, token)
     try:
@@ -249,7 +249,7 @@ async def get_user_data(request:Request, api_key: str = Header(...), token: str 
         raise HTTPException(status_code=500, detail=str(e))
 
 # Execute trade endpoint
-@extension.post("/trade", response_model=TradeResponse)
+@router.post("/trade", response_model=TradeResponse)
 async def execute_trade(
     request:Request, 
     trade: TradeRequest,
@@ -272,11 +272,4 @@ async def execute_trade(
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-    
-@extension.get("/dbhealth")
-def db_health():
-    try:
-        data = get_user(db, "49127765")
-        return {"status": "Database connected", "data": data}
-    except Exception as e:
-        return {"status": "Database connection failed", "error": str(e)}    
+     
