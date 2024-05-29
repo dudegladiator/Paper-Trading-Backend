@@ -72,9 +72,13 @@ def handle_trade(user_data, trade: TradeRequest):
         raise HTTPException(status_code=400, detail="Invalid date and time")
 
     # Check for valid trading hours and days
-    if not (9, 15) <= (trade_date.hour, trade_date.minute) <= (3, 30):
+    if trade_date.hour < 9 and trade_date.minutes < 15:
         raise HTTPException(status_code=400, detail="Trade time must be between 9:15 AM to 3:30 PM")
-
+    
+    if trade_date.hour > 15 and trade_date.minutes > 30:
+        raise HTTPException(status_code=400, detail="Trade time must be between 9:15 AM to 3:30 PM")
+    print(trade_date.weekday())
+    
     if trade_date.weekday() >= 5:  # 0=Monday, 4=Friday, 5=Saturday
         raise HTTPException(status_code=400, detail="Trades can only be executed from Monday to Friday")
     
