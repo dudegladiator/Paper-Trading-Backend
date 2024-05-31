@@ -21,7 +21,7 @@ from utils.util import create_token
 router = APIRouter()
 db = Database()
 
-chrome_extension_origin = "chrome-extension://hbocfhgkiadihfiiikhohblkdoahegkk"
+chrome_extension_origin = "chrome-extension://"
 
 # Authentication Model
 class AuthResponse(BaseModel):
@@ -212,9 +212,12 @@ def handle_sell(user_data, trade: TradeRequest, charges: float):
 # Authentication endpoint
 @router.post("/authenticate", response_model=AuthResponse)
 async def authenticate(request:Request, api_key: str):
-    if request.headers.get("Origin") != chrome_extension_origin:
+    if chrome_extension_origin not in request.headers.get("Origin"):
         print(request.headers.get("Origin"))
         raise HTTPException(status_code=500, detail="Invalid origin")
+    # if request.headers.get("Origin") != chrome_extension_origin:
+    #     print(request.headers.get("Origin"))
+    #     raise HTTPException(status_code=500, detail="Invalid origin")
     print(request.headers.get("Origin"))
     try:
         user_data = get_user(db, api_key)
@@ -256,7 +259,7 @@ async def execute_trade(
     api_key: str = Header(...),
     token: str = Header(...)
 ):
-    if request.headers.get("Origin") != chrome_extension_origin:
+    if chrome_extension_origin not in request.headers.get("Origin"):
         print(request.headers.get("Origin"))
         raise HTTPException(status_code=500, detail="Invalid origin")
     print(trade, api_key, token)
